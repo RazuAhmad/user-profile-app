@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Typewriter from "typewriter-effect";
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
 function UserProfileForm() {
   const [allUsers,setAllUsers]=useState([]);
+  const [allSectors,setAllSectors]=useState([]);
+
   const [mongoInsertedId,setMongoInsertedId]=useState("");
   const { register, handleSubmit ,reset,setValue} = useForm();
 
@@ -16,7 +19,16 @@ useEffect(()=>{
   fetch("http://localhost:5000/users")
   .then(res=>res.json())
   .then(data=>setAllUsers(data))
-});
+},[allUsers]);
+
+// Show all sectors in the select option:::
+
+useEffect(()=>{
+  fetch("http://localhost:5000/userSector")
+  .then(res=>res.json())
+  .then(data=>setAllSectors(data))
+},[])
+
 
 // Load form data from session storage
 useEffect(() => {
@@ -34,6 +46,7 @@ useEffect(() => {
   // console.log(storedData);
  
 }, []);
+
 
   const onSubmit = (data) => {
 
@@ -59,18 +72,18 @@ useEffect(() => {
     })
 
 
-    // Update the input data.......
-    fetch(`http://localhost:5000/users/${mongoInsertedId}`,{
-      method:"PUT",
-      headers:{
-        'content-type': 'application/json'
-      },
-      body:JSON.stringify(data)
-    })
-    .then(res=>res.json())
-    .then(data=>{
-      console.log(data);
-    })
+    // // Update the input data.......
+    // fetch(`http://localhost:5000/users/${mongoInsertedId}`,{
+    //   method:"PUT",
+    //   headers:{
+    //     'content-type': 'application/json'
+    //   },
+    //   body:JSON.stringify(data)
+    // })
+    // .then(res=>res.json())
+    // .then(data=>{
+    //   console.log(data);
+    // })
     
   };
 
@@ -79,8 +92,19 @@ useEffect(() => {
 
   <div className='py-20'>
 
-<p className='font-bold text-center text-white text-3xl mx-5 mb-7'>Please enter your name and pick the Sectors you are currently involved in.</p>
-<p className='font-bold text-center text-white text-3xl mx-5 mb-7'>Total Number of Users: {allUsers.length}</p>
+<p className='font-bold  text-center text-white text-2xl md:text-3xl mb-7 standard_font'>Please enter your name and pick the Sectors you are currently involved in.</p>
+
+
+<h1 className="font-bold text-center text-white  text-3xl  mb-7 standard_font">
+          <Typewriter
+            options={{
+              strings: [`Total Number of Users: ${allUsers.length}`],
+              autoStart: true,
+              loop: true,
+            }}
+          />
+        </h1>
+
   <ToastContainer/>
     
     <form onSubmit={ handleSubmit(onSubmit
@@ -91,50 +115,32 @@ useEffect(() => {
             <p className=' mb-4 font-bold text-xl'>
             <label htmlFor='name' className='mb-1 text-white'>Name</label><br />
 
-            <input id='name' required {...register("name")} className='w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500' type="text"
+            <input id='name'  required {...register("name")} className='w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500' type="text"
             pattern="[A-Za-z ]+" title="Enter only alphabetic characters"  placeholder='Enter Your Name'/>
 
             </p>
 
           {/* Sectors select option field */}
-            <p className=' mb-4 font-bold text-xl'>
-            <label htmlFor="sector" className='text-white'>Sectors</label><br />
+          <p className=' mb-4 font-bold text-md'>
+          <label htmlFor="sector" className='text-white'>Sectors</label><br />
 
-          <select id="sector" required multiple {...register("sector")}  className='class="w-full block px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm' >
-            <option value="Manufacturing">Manufacturing</option>
-            <option value="Construction">Construction materials</option>
-            <option value="Electronics and Optics">Electronics and Optics</option>
-            <option value="Food and Beverage">Food and Beverage</option>
-            <option value="Bakery & confectionery products">Bakery & confectionery products</option>
-            <option value="Beverages">Beverages</option>
-            <option value="Fish & fish products">Fish & fish products</option>
-            <option value="">Meat & meat products</option>
-            <option value="">Milk & dairy products</option>
-            <option value="">Other</option>
-            <option value="">Sweets & Snack food</option>
-            <option value="">Furniture</option>
-            
-            <optgroup label="Fruits">
-            <option value="apple">Apple</option>
-             <option value="banana">Banana</option>
-             <option value="orange">Orange</option>
-            </optgroup>
-            
-            <option value="">Bathroom/sauna</option>
-            <option value="">Bedroom</option>
-
+          <select id="sector" required multiple {...register("sector")}  className="w-full block px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" >
+            {
+              allSectors.map(pd=><option key={pd._id} value={pd.sector} >{pd.sector}</option>)
+            }
           </select>
           </p>
 
           <p>
-          <input id='checkbox' required {...register('checkbox')} type="checkbox" className='w-4 h-4'/>
+         
+          <input className='w-4 h-4' id='checkbox' required {...register('checkbox')} type="checkbox"  />
           <label htmlFor="checkbox" className='text-white ml-2'>Agree to Terms & Conditions</label>  
           </p>
 
           {
             mongoInsertedId ? 
             <p>
-              <Link to={`/updateUserProfile/:${mongoInsertedId}`}>
+              <Link to={`/updateUserProfile/${mongoInsertedId}`}>
               <button type='button' className='text-white bg-red-700 border-2  mt-2 px-7 py-1 rounded cursor-pointer hover:bg-orange-700'>Want to Update your submitted data?</button>
               </Link>
             </p>

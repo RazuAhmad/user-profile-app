@@ -1,6 +1,7 @@
 import { Navbar } from 'flowbite-react'
 import React from 'react'
 import {  NavLink } from 'react-router-dom'
+import hongkongImg from "../../images/hongkon.png"
 
 function NavigationBar() {
   return (
@@ -15,9 +16,10 @@ function NavigationBar() {
     to="/navbars"
     className='cursor-pointer ml-4 lg:ml-8'
   >
-    
+    <img src={hongkongImg} alt="hongkon logo" className='w-6 md:w-9'/>
     <span className="self-center whitespace-nowrap text-xl font-extrabold dark:text-white ">
-      HK Professional
+      
+    Hong Kong Pro
     </span>
   </Navbar.Brand>
   <Navbar.Toggle  />

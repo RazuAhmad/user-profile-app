@@ -2,17 +2,22 @@ import React, { useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+
+
 
 function UpdateUserProfile() {
-    const { register, handleSubmit ,reset,setValue} = useForm();
+    const { register, handleSubmit ,setValue} = useForm();
     const [allUsers,setAllUsers]=useState([]);
     const [SpecificUser,setSpecificUser]=useState([]);
+    const [allSectors,setAllSectors]=useState([])
 
-    const notify = () => toast("Successfully updated user");
+    const notify = () => toast("Successfully updated user!!");
     const {id}=useParams();
     
-    const {name,sector}=SpecificUser;
+    const {name,sector,checkbox}=SpecificUser;
 
 // Show number of users profile are stored...
 useEffect(()=>{
@@ -21,7 +26,7 @@ useEffect(()=>{
     .then(data=>setAllUsers(data))
   },[]);
 
-//   Specific user's 
+  // Specific user's 
 useEffect(()=>{
     fetch(`http://localhost:5000/users/${id}`)
     .then(res=>res.json())
@@ -29,35 +34,82 @@ useEffect(()=>{
   },[id]);
 
 
+// Show all sectors in the select option:::
+
+useEffect(()=>{
+  fetch("http://localhost:5000/userSector")
+  .then(res=>res.json())
+  .then(data=>setAllSectors(data))
+
+
+},[])
+
+
+useEffect(()=>{
+    setValue("name",name);
+setValue("sector",sector);
+setValue("checkbox",checkbox)
+},[name,sector,checkbox,setValue])
+
+
     // OnSubmit handler.....
     const onSubmit = (data) => { 
         console.log(data);
-        notify();
+       
+        fetch(`http://localhost:5000/users/${id}`,{
+          method:"PUT",
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(res=>res.json())
+        .then(data=>{
+          console.log(data);
+          if(data.modifiedCount>0){
+            notify();
+          }
+          else{
+            alert("You have not updated anything")
+          }
+        })
+       
+       
     }
     console.log("Specific user",SpecificUser);
   return (
 
     <div className='py-20'>
 
-<p className='font-bold text-center text-white text-3xl mx-5 mb-7'>If You want to update data then edit now. 
-Your mongodb Unique Id is {id}
-<br/>
-your typed name: {name} <br/>
-Your sector: {sector}
+<p className='font-bold text-center text-white text-3xl mx-5 mb-7 standard_font'>Update Your Submitted data Now! 
 </p>
 
-<p className='font-bold text-center text-white text-3xl mx-5 mb-7'>Total Number of Users: {allUsers.length}</p>
+
+<p className='font-bold text-center text-white text-3xl mx-5 mb-7 standard_font'>Total Number of Users: {allUsers.length}</p>
   <ToastContainer/>
 
     <form onSubmit={ handleSubmit(onSubmit
         ) } className="max-w-xl mx-auto 
           p-4 sm:p-8 md:p-12 lg:p-16 border-4 border-white rounded-3xl shadow-md bg-green-500 SellForm-container_main ">
-    
+            
+            <p className='mb-7 text-white'>
+           <Link to='/home'>
+           <button type='button' className='bg-red-600 p-1 md:p-3 rounded-lg hover:bg-white hover:text-black'>
+            <FontAwesomeIcon icon={faArrowLeft} size='2x' />
+            <span className='text-2xl font-bold ml-2 '>
+            Back to Home
+            </span>
+            
+            </button>
+           </Link>
+
+            </p>
+
             {/* Name Input field */}
                 <p className=' mb-4 font-bold text-xl'>
                 <label htmlFor='name'  className='mb-1 text-white'>Name</label><br />
     
-                <input id='name' required {...register("name")} className='w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500' type="text"
+                <input id='name'  required {...register("name")} className='w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500' type="text"
                 pattern="[A-Za-z ]+" title="Enter only alphabetic characters"  placeholder='Enter Your Name'/>
     
                 </p>
@@ -66,34 +118,16 @@ Your sector: {sector}
                 <p className=' mb-4 font-bold text-xl'>
                 <label htmlFor="sector" className='text-white'>Sectors</label><br />
     
-              <select id="sector" required multiple {...register("sector")}  className='class="w-full block px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm' >
-                <option value="Manufacturing">Manufacturing</option>
-                <option value="Construction">Construction materials</option>
-                <option value="Electronics and Optics">Electronics and Optics</option>
-                <option value="Food and Beverage">Food and Beverage</option>
-                <option value="Bakery & confectionery products">Bakery & confectionery products</option>
-                <option value="Beverages">Beverages</option>
-                <option value="Fish & fish products">Fish & fish products</option>
-                <option value="">Meat & meat products</option>
-                <option value="">Milk & dairy products</option>
-                <option value="">Other</option>
-                <option value="">Sweets & Snack food</option>
-                <option value="">Furniture</option>
-                
-                <optgroup label="Fruits">
-                <option value="apple">Apple</option>
-                 <option value="banana">Banana</option>
-                 <option value="orange">Orange</option>
-                </optgroup>
-                
-                <option value="">Bathroom/sauna</option>
-                <option value="">Bedroom</option>
+              <select id="sector"  required multiple {...register("sector")}  className='w-full block px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm' >
+              {
+              allSectors.map(pd=><option  key={pd._id} value={pd.sector} >{pd.sector}</option>)
+            }
     
               </select>
               </p>
     
               <p>
-              <input id='checkbox' required {...register('checkbox')} type="checkbox" className='w-4 h-4'/>
+              <input id='checkbox'  required {...register('checkbox')} type="checkbox" className='w-4 h-4'/>
               <label htmlFor="checkbox" className='text-white ml-2'>Agree to Terms & Conditions</label>  
               </p>
     
