@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 
 function UserProfileForm() {
   const [allUsers,setAllUsers]=useState([]);
+  const [mongoInsertedId,setMongoInsertedId]=useState("");
   const { register, handleSubmit ,reset,setValue} = useForm();
 
   const notify = () => toast("Successfully saved user");
@@ -21,19 +23,21 @@ useEffect(() => {
   
   const storedData = sessionStorage.getItem("form_data");
   if (storedData) {
+    
     const data = JSON.parse(storedData);
     Object.keys(data).forEach((key) => {
       setValue(key, data[key]);
-      console.log(storedData);
+      // console.log(storedData);
     });
+    reset();
   }
-  reset();
+  // console.log(storedData);
+ 
 }, []);
 
   const onSubmit = (data) => {
 
-    // Save form data to session storage
-    sessionStorage.setItem("form_data", JSON.stringify(data));
+    console.log(data);
 
     fetch('http://localhost:5000/users',{
     method:'POST',
@@ -43,12 +47,31 @@ useEffect(() => {
     body: JSON.stringify(data)
     })
     .then(res=>res.json())
-    .then(data=>{
-      if(data.acknowledged){
+    .then(dataConfirmation=>{
+     
+      if(dataConfirmation.acknowledged){
        notify();
-        // reset();
+       setMongoInsertedId(dataConfirmation.insertedId)
+      // Save form data to session storage
+    sessionStorage.setItem("form_data", JSON.stringify(data));
+    
       }
     })
+
+
+    // Update the input data.......
+    fetch(`http://localhost:5000/users/${mongoInsertedId}`,{
+      method:"PUT",
+      headers:{
+        'content-type': 'application/json'
+      },
+      body:JSON.stringify(data)
+    })
+    .then(res=>res.json())
+    .then(data=>{
+      console.log(data);
+    })
+    
   };
 
 
@@ -60,15 +83,16 @@ useEffect(() => {
 <p className='font-bold text-center text-white text-3xl mx-5 mb-7'>Total Number of Users: {allUsers.length}</p>
   <ToastContainer/>
     
-    <form onSubmit={handleSubmit(onSubmit
-    )} className="max-w-xl mx-auto 
+    <form onSubmit={ handleSubmit(onSubmit
+    ) } className="max-w-xl mx-auto 
       p-4 sm:p-8 md:p-12 lg:p-16 border-4 border-white rounded-3xl shadow-md bg-gray-900 SellForm-container_main ">
 
         {/* Name Input field */}
             <p className=' mb-4 font-bold text-xl'>
             <label htmlFor='name' className='mb-1 text-white'>Name</label><br />
 
-            <input id='name' required {...register("name")} className='w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500' type="text"  placeholder='Enter Your Name'/>
+            <input id='name' required {...register("name")} className='w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500' type="text"
+            pattern="[A-Za-z ]+" title="Enter only alphabetic characters"  placeholder='Enter Your Name'/>
 
             </p>
 
@@ -107,9 +131,19 @@ useEffect(() => {
           <label htmlFor="checkbox" className='text-white ml-2'>Agree to Terms & Conditions</label>  
           </p>
 
+          {
+            mongoInsertedId ? 
+            <p>
+              <Link to={`/updateUserProfile/:${mongoInsertedId}`}>
+              <button type='button' className='text-white bg-red-700 border-2  mt-2 px-7 py-1 rounded cursor-pointer hover:bg-orange-700'>Want to Update your submitted data?</button>
+              </Link>
+            </p>
+
+            :
             <p>
             <input  className='text-white bg-green-700 border-2  mt-2 px-7 py-1 rounded cursor-pointer hover:bg-orange-700'  type="submit" value="Save" />
             </p>
+          }
             
         </form>
         </div>
