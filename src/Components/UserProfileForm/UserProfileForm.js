@@ -16,7 +16,7 @@ function UserProfileForm() {
 
 // Show number of users profile are stored...
 useEffect(()=>{
-  fetch("http://localhost:5000/users")
+  fetch("https://user-profile-server-gamma.vercel.app/users")
   .then(res=>res.json())
   .then(data=>setAllUsers(data))
 },[allUsers]);
@@ -24,7 +24,7 @@ useEffect(()=>{
 // Show all sectors in the select option:::
 
 useEffect(()=>{
-  fetch("http://localhost:5000/userSector")
+  fetch("https://user-profile-server-gamma.vercel.app/userSector")
   .then(res=>res.json())
   .then(data=>setAllSectors(data))
 },[])
@@ -52,7 +52,7 @@ useEffect(() => {
 
     console.log(data);
 
-    fetch('http://localhost:5000/users',{
+    fetch('https://user-profile-server-gamma.vercel.app/users',{
     method:'POST',
     headers:{
       'content-type':'application/json'
@@ -71,20 +71,6 @@ useEffect(() => {
       }
     })
 
-
-    // // Update the input data.......
-    // fetch(`http://localhost:5000/users/${mongoInsertedId}`,{
-    //   method:"PUT",
-    //   headers:{
-    //     'content-type': 'application/json'
-    //   },
-    //   body:JSON.stringify(data)
-    // })
-    // .then(res=>res.json())
-    // .then(data=>{
-    //   console.log(data);
-    // })
-    
   };
 
 
