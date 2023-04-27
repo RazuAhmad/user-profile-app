@@ -9,18 +9,25 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
 
 function UpdateUserProfile() {
-    const { register, handleSubmit ,setValue} = useForm();
+
+
+    
     const [allUsers,setAllUsers]=useState([]);
-    const [SpecificUser,setSpecificUser]=useState([]);
+    const [SpecificUser,setSpecificUser]=useState({});
     const [allSectors,setAllSectors]=useState([])
 
     const notify = () => toast("Successfully updated user!!");
     const {id}=useParams();
     
     const {name,sector,checkbox}=SpecificUser;
+    const { register, handleSubmit ,setValue} = useForm({
+      
+    });
 
-// Show number of users profile are stored...
-useEffect(()=>{
+
+
+  // Show number of users profile are stored...
+  useEffect(()=>{
     fetch("http://localhost:5000/users")
     .then(res=>res.json())
     .then(data=>setAllUsers(data))
@@ -47,7 +54,7 @@ useEffect(()=>{
 
 useEffect(()=>{
     setValue("name",name);
-setValue("sector",sector);
+setValue ("sector",sector);
 setValue("checkbox",checkbox)
 },[name,sector,checkbox,setValue])
 
@@ -66,7 +73,7 @@ setValue("checkbox",checkbox)
         .then(res=>res.json())
         .then(data=>{
           console.log(data);
-          if(data.modifiedCount>0){
+          if(data.modifiedCount>0 ){
             notify();
           }
           else{
@@ -76,7 +83,7 @@ setValue("checkbox",checkbox)
        
        
     }
-    console.log("Specific user",SpecificUser);
+    console.log("Specific user",SpecificUser, "sector name",sector);
   return (
 
     <div className='py-20'>
@@ -86,11 +93,11 @@ setValue("checkbox",checkbox)
 
 
 <p className='font-bold text-center text-white text-3xl mx-5 mb-7 standard_font'>Total Number of Users: {allUsers.length}</p>
-  <ToastContainer/>
+  <ToastContainer type="alert"/>
 
     <form onSubmit={ handleSubmit(onSubmit
         ) } className="max-w-xl mx-auto 
-          p-4 sm:p-8 md:p-12 lg:p-16 border-4 border-white rounded-3xl shadow-md bg-green-500 SellForm-container_main ">
+          p-4 sm:p-8 md:p-12 lg:p-16 border-4 border-white rounded-3xl shadow-md bg-green-800 SellForm-container_main ">
             
             <p className='mb-7 text-white'>
            <Link to='/home'>
@@ -118,10 +125,11 @@ setValue("checkbox",checkbox)
                 <p className=' mb-4 font-bold text-xl'>
                 <label htmlFor="sector" className='text-white'>Sectors</label><br />
     
-              <select id="sector"  required multiple {...register("sector")}  className='w-full block px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm' >
+              <select id="sector" defaultValue={ sector}  required multiple {...register("sector")}  className='w-full block px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm' >
+              
               {
               allSectors.map(pd=><option  key={pd._id} value={pd.sector} >{pd.sector}</option>)
-            }
+              }
     
               </select>
               </p>
@@ -132,7 +140,7 @@ setValue("checkbox",checkbox)
               </p>
     
                 <p>
-                <input  className='text-white bg-green-700 border-2  mt-2 px-7 py-1 rounded cursor-pointer hover:bg-orange-700'  type="submit" value="Update" />
+                <input  className='text-white bg-red-700 border-2  mt-2 px-7 py-1 rounded cursor-pointer hover:bg-orange-700'  type="submit" value="Update" />
                 </p>
             
                 

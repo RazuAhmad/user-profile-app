@@ -12,7 +12,7 @@ background: linear-gradient(90deg, rgba(106,26,170,1) 36%, rgba(240,43,195,1) 10
 .gradient-background {
   background: linear-gradient(300deg,darkviolet,blue,#e30c0c,#e30ccd);
   background-size: 240% 240%;
-  animation: gradient-animation 28s ease infinite;
+  animation: gradient-animation 6s ease infinite;
 }
 
 @keyframes gradient-animation {
