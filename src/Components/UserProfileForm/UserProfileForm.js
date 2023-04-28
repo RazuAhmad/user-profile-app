@@ -16,7 +16,7 @@ function UserProfileForm() {
 
 // Show number of users profile are stored...
 useEffect(()=>{
-  fetch("https://user-profile-server-gamma.vercel.app/users")
+  fetch("https://hongkong-professionals.vercel.app/users")
   .then(res=>res.json())
   .then(data=>setAllUsers(data))
 },[allUsers]);
@@ -24,7 +24,7 @@ useEffect(()=>{
 // Show all sectors in the select option:::
 
 useEffect(()=>{
-  fetch("https://user-profile-server-gamma.vercel.app/userSector")
+  fetch("https://hongkong-professionals.vercel.app/userSector")
   .then(res=>res.json())
   .then(data=>setAllSectors(data))
 },[])
@@ -52,7 +52,7 @@ useEffect(() => {
 
     console.log(data);
 
-    fetch('https://user-profile-server-gamma.vercel.app/users',{
+    fetch('https://hongkong-professionals.vercel.app/users',{
     method:'POST',
     headers:{
       'content-type':'application/json'
@@ -110,7 +110,7 @@ useEffect(() => {
           <p className=' mb-4 font-bold text-md'>
           <label htmlFor="sector" className='text-white'>Sectors</label><br />
 
-          <select id="sector" required multiple {...register("sector")}  className="w-full block px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" >
+          <select id="sector" required  {...register("sector")}  className="w-full block px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" >
             {
               allSectors.map(pd=><option key={pd._id} value={pd.sector} >{pd.sector}</option>)
             }

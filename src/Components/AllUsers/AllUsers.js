@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 function AllUsers() {
     const [allUserProfile,setAllUserProfile]=useState([]);
     useEffect(()=>{
-        fetch("https://user-profile-server-gamma.vercel.app/users")
+        fetch("https://hongkong-professionals.vercel.app/users")
         .then(res=>res.json())
         .then(data=>setAllUserProfile(data))
       },[]);

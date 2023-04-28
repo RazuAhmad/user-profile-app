@@ -7,42 +7,36 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
 
-
 function UpdateUserProfile() {
 
 
-    
     const [allUsers,setAllUsers]=useState([]);
     const [SpecificUser,setSpecificUser]=useState({});
     const [allSectors,setAllSectors]=useState([])
 
     const notify = () => toast("Successfully updated user!!");
     const {id}=useParams();
-    console.log("params id", id);
     const {name,sector,checkbox}=SpecificUser;
-    const { register, handleSubmit ,setValue} = useForm({
-      defaultValues:{
-        sector:sector
-      }
-    });
 
+    const { register, handleSubmit ,setValue} = useForm({
+      sector:sector
+    });
 
 
   // Show number of users profile are stored...
   useEffect(()=>{
-    fetch("https://user-profile-server-gamma.vercel.app/users")
+    fetch("https://hongkong-professionals.vercel.app/users")
     .then(res=>res.json())
     .then(data=>setAllUsers(data))
   },[]);
 
   // Specific user's 
 useEffect(()=>{
-    fetch(`https://user-profile-server-gamma.vercel.app/users/${id}`)
+    fetch(`https://hongkong-professionals.vercel.app/users/${id}`)
     .then(res=>res.json())
     .then(data=>{
      
-      
-    setSpecificUser(data)
+    setSpecificUser(data);
     })
   },[id]);
 
@@ -50,7 +44,7 @@ useEffect(()=>{
 // Show all sectors in the select option:::
 
 useEffect(()=>{
-  fetch("https://user-profile-server-gamma.vercel.app/userSector")
+  fetch("https://hongkong-professionals.vercel.app/userSector")
   .then(res=>res.json())
   .then(data=>{
     
@@ -58,13 +52,13 @@ useEffect(()=>{
     
   })
 
-
 },[])
 
 
 useEffect(()=>{
     setValue("name",name);
 setValue ("sector",sector);
+console.log(sector);
 setValue("checkbox",checkbox)
 },[name,sector,checkbox,setValue])
 
@@ -73,7 +67,7 @@ setValue("checkbox",checkbox)
     const onSubmit = (data) => { 
         console.log(data);
        
-        fetch(`https://user-profile-server-gamma.vercel.app/users/${id}`,{
+        fetch(`https://hongkong-professionals.vercel.app/users/${id}`,{
           method:"PUT",
           headers: {
             'content-type': 'application/json'
@@ -95,7 +89,7 @@ setValue("checkbox",checkbox)
        
        
     }
-    console.log("Specific user",SpecificUser, "sector name",sector);
+    // console.log("Specific user",SpecificUser, "sector name",sector);
     // console.log("Sectors console",allSectors);
   return (
 
@@ -138,7 +132,7 @@ setValue("checkbox",checkbox)
                 <p className=' mb-4 font-bold text-xl'>
                 <label htmlFor="sector" className='text-white'>Sectors</label><br />
     
-              <select id="sector" selected defaultValue={ sector}  required  {...register("sector")}  className='w-full block px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm' >
+              <select id="sector"  defaultValue={ sector}  required  {...register("sector")}  className='w-full block px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm' >
               
               {
               allSectors.map(pd=><option  key={pd._id} value={pd.sector} >{pd.sector}</option>)
