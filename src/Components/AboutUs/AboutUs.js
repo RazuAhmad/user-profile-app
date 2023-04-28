@@ -29,11 +29,11 @@ const AboutUs = () => {
             
             {/* About us start */}
              <div className="flex flex-col md:items-start items-center w-full md:w-1/3 ">
-               <h1 className=" text-red-600 font-serif font-extrabold text-4xl mb-3">About us</h1>
+               <h1 className=" text-white font-serif font-extrabold text-4xl mb-3">About us</h1>
                <p className="">
                  Lorem ipsum dolar 
                </p>
-               <p> sit amet consectetur adipisicing <br /> elit. Dignissimos, temporibus.</p>
+               <p> sit amet consectetur adipisicing temporibus.</p>
                
              </div>
              {/* About us ended */}
